@@ -98,12 +98,21 @@ async function run() {
       res.send(result);
     })
 
-
+    
     // * creating users
     app.post('/users', async(req,res)=> {
       const userProfile = req.body;
       const result = await userCollection.insertOne(userProfile);
       res.send(result);
+    })
+
+
+    // * deleting users
+    app.delete('/users/:id' , async(req,res)=>{
+      const id = req.params.id;
+      const query = { _id : new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
+      res.send(result)
     })
 
 
@@ -119,7 +128,7 @@ app.get("/", (req, res) => {
   res.send("Coffee is getting ready to warm to up!");
 });
 
-// listing to the port
+// listening to the port
 app.listen(port, () => {
   console.log(`Coffee server is listening to port "${port}"`);
 });

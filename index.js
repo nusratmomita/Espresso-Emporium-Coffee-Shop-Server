@@ -24,9 +24,8 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const coffeeCollection = client
-      .db("coffeeStoreDB")
-      .collection("addNewCoffee");
+    const coffeeCollection = client.db("coffeeStoreDB").collection("addNewCoffee");
+    const userCollection = client.db('coffeeStoreDB').collection('users')
 
     // ! doing CRUD's R -> read
     // showing already added coffees in the UI
@@ -89,6 +88,25 @@ async function run() {
       const result = await coffeeCollection.deleteOne(query);
       res.send(result);
     });
+
+    // users DB operations
+
+    // from here if we do http://localhost:3000/users then we get all the data in the chrome 
+    // * getting all the users
+    app.get('/users', async(req,res)=>{
+      const result = await userCollection.find().toArray();
+      res.send(result);
+    })
+
+
+    // * creating users
+    app.post('/users', async(req,res)=> {
+      const userProfile = req.body;
+      const result = await userCollection.insertOne(userProfile);
+      res.send(result);
+    })
+
+
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
@@ -103,5 +121,5 @@ app.get("/", (req, res) => {
 
 // listing to the port
 app.listen(port, () => {
-  console.log(`Coffee server is listing to port "${port}"`);
+  console.log(`Coffee server is listening to port "${port}"`);
 });

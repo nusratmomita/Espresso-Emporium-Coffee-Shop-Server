@@ -2,6 +2,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const { use } = require("react");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -107,6 +108,20 @@ async function run() {
     })
 
 
+    // * updating user using PATCH
+    app.patch('/users', async(req,res)=>{
+      // console.log(req.body)
+      const {email,lastSignInTime} = req.body;
+      const filter = {email : email};
+      const updatedDoc = {
+        $set: {
+          lastSignInTime:lastSignInTime
+        }
+      }
+      const result = await userCollection.updateOne(filter,updatedDoc);
+      res.send(result);
+      
+    })
     // * deleting users
     app.delete('/users/:id' , async(req,res)=>{
       const id = req.params.id;
